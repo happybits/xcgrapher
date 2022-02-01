@@ -1,4 +1,14 @@
-prefix ?= /usr/local
+# prefix ?= /usr/local
+prefix ?= /opt/homebrew
+# intel_brew_path = /usr/local/bin/brew
+# m1_brew_path = /opt/homebrew/bin/brew
+# # Export Homebrew variables for current platform
+# if [[ -x "$m1_brew_path" ]]; then
+#     eval "$($m1_brew_path shellenv)"
+# elif [[ -x "$intel_brew_path" ]]; then
+#     eval "$($intel_brew_path shellenv)"
+# fi
+
 bindir = $(prefix)/bin
 libdir = $(prefix)/lib
 buildroot = $(shell swift build -c release --show-bin-path)
@@ -7,7 +17,7 @@ configure:
 	echo "let DEFAULT_PLUGIN_LOCATION=\"$(libdir)/libXCGrapherModuleImportPlugin.dylib\"" > Sources/xcgrapher/Generated.swift
 
 build: configure
-	xcrun swift build -c release --disable-sandbox
+	xcrun swift build -c release --disable-sandbox -Xlinker -rpath -Xlinker "$(libdir)"
 
 install: build
 	# Seems like brew hasn't created this yet and it confuses 'install' so...
